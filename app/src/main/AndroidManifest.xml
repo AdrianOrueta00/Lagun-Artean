@@ -10,13 +10,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LagunArtean">
         <activity
-            android:name=".LoginActivity"
+            android:name=".Vista.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".Vista.AddUserActivity_1"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".Vista.AddUserActivity_2"
+            android:exported="true">
         </activity>
     </application>
 

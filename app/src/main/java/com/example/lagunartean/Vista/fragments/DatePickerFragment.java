@@ -1,4 +1,4 @@
-package com.example.lagunartean.fragments;
+package com.example.lagunartean.Vista.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -8,9 +8,6 @@ import android.widget.EditText;
 
 import androidx.fragment.app.DialogFragment;
 
-import com.example.lagunartean.R;
-
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment
