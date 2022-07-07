@@ -46,9 +46,7 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
                 newFragment.setCampo(campoFecha);
                 newFragment.show(getSupportFragmentManager(), "Fecha de nacimiento");
                 break;
-            case R.id.campo_nacionalidad:
 
-                break;
             case R.id.btn_registrar_usuario:
 
                 String codPais = campoNacionalidad.getSelectedCountryNameCode();

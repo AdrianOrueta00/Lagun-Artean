@@ -24,9 +24,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.btn_registro:
 
-                Intent miIntent = new Intent(MainActivity.this, AddUserActivity_1.class);
+                Intent miIntent1 = new Intent(MainActivity.this, AddUserActivity_1.class);
 
-                startActivity(miIntent);
+                startActivity(miIntent1);
+                break;
+
+            case R.id.btn_listado:
+
+                Intent miIntent2 = new Intent(MainActivity.this, UserListActivity.class);
+
+                startActivity(miIntent2);
+                break;
         }
     }
 }

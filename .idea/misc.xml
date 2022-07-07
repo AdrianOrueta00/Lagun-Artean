@@ -3,9 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/TEMP/DAS/AndroidStudioProjects/LagunArtean/app/src/main/res/layout/activity_list.xml" value="0.18857142857142858" />
         <entry key="..\:/TEMP/DAS/AndroidStudioProjects/LagunArtean/app/src/main/res/layout/activity_login.xml" value="0.2318840579710145" />
         <entry key="..\:/TEMP/DAS/AndroidStudioProjects/LagunArtean/app/src/main/res/layout/activity_login2.xml" value="0.18857142857142858" />
         <entry key="..\:/TEMP/DAS/AndroidStudioProjects/LagunArtean/app/src/main/res/layout/activity_main.xml" value="0.2318840579710145" />
+        <entry key="..\:/TEMP/DAS/AndroidStudioProjects/LagunArtean/app/src/main/res/layout/activity_user_list.xml" value="0.1" />
+        <entry key="..\:/TEMP/DAS/AndroidStudioProjects/LagunArtean/app/src/main/res/layout/card_user.xml" value="0.2318840579710145" />
       </map>
     </option>
   </component>

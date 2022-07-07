@@ -2,10 +2,15 @@ package com.example.lagunartean.Controlador;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+
+import com.example.lagunartean.Modelo.User;
+
+import java.util.ArrayList;
 
 
 public class DatabaseAdapter extends SQLiteOpenHelper {
@@ -51,6 +56,28 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
         values.put(CAMPO_FECHA, pFecha);
         values.put(CAMPO_NACIONALIDAD, pNacionalidad);
         db.insert(TABLA_USUARIO, null, values);
+        //db.execSQL("DELETE FROM " + TABLA_USUARIO);
         db.close();
+    }
+
+    public ArrayList<User> cargarUsuarios(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        User usuario = null;
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLA_USUARIO, null);
+
+        ArrayList<User> lUsuarios = new ArrayList<User>();
+
+        while (cursor.moveToNext()) {
+            usuario = new User();
+            usuario.setNombre(cursor.getString(1));
+            usuario.setDNI(cursor.getString(2));
+            usuario.setTlf(cursor.getString(3));
+            usuario.setFNacimiento(cursor.getString(4));
+            usuario.setNacionalidad(cursor.getString(5));
+
+            lUsuarios.add(usuario);
+        }
+        db.close();
+        return lUsuarios;
     }
 }

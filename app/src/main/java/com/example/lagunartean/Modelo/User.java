@@ -1,5 +1,7 @@
 package com.example.lagunartean.Modelo;
 
+import java.util.Calendar;
+
 public class User {
 
     private String nombre;
@@ -40,8 +42,25 @@ public class User {
         this.tlf = tlf;
     }
 
-    public String getFNacimiento() {
-        return fNacimiento;
+    public String getEdad() {
+        int diaNacimiento = Integer.parseInt(fNacimiento.substring(0, 2));
+        int mesNacimiento = Integer.parseInt(fNacimiento.substring(3, 5));
+        int annoNacimiento = Integer.parseInt(fNacimiento.substring(6));
+
+        Calendar c = Calendar.getInstance();
+        int diaActual = c.get(Calendar.DAY_OF_MONTH);
+        int mesActual = c.get(Calendar.MONTH);
+        int annoActual = c.get(Calendar.YEAR);
+
+        int edad = annoActual - annoNacimiento;
+        if (mesActual<mesNacimiento){
+            edad--;
+        }
+        else if (mesActual==mesNacimiento && diaActual<diaNacimiento){
+            edad--;
+        }
+
+        return String.valueOf(edad);
     }
 
     public void setFNacimiento(String fNacimiento) {
