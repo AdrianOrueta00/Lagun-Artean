@@ -3,20 +3,17 @@ package com.example.lagunartean.Vista;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.DatePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.lagunartean.Modelo.Application;
 import com.example.lagunartean.R;
-import com.example.lagunartean.Modelo.User;
-import com.example.lagunartean.Vista.fragments.DatePickerFragment;
 import com.hbb20.CountryCodePicker;
 
 public class AddUserActivity_2 extends AppCompatActivity implements View.OnClickListener{
 
-    private EditText campoFecha;
+    private DatePicker campoFecha;
     private CountryCodePicker campoNacionalidad;
 
     private int id;
@@ -45,26 +42,48 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
         if (this.id != -1){
             this.fNacimiento = getIntent().getStringExtra("fNacimiento");
             this.nacionalidad = getIntent().getStringExtra("nacionalidad");
-            campoFecha.setText(this.fNacimiento);
+            int diaNacimiento = Integer.parseInt(fNacimiento.substring(0, 2));
+            int mesNacimiento = Integer.parseInt(fNacimiento.substring(3, 5)) - 1;
+            int annoNacimiento = Integer.parseInt(fNacimiento.substring(6));
+            campoFecha.updateDate(annoNacimiento, mesNacimiento, diaNacimiento);
             campoNacionalidad.setDefaultCountryUsingNameCode(this.nacionalidad);
             campoNacionalidad.resetToDefaultCountry();
         }
 
     }
 
+    public String formatDate(int year, int month, int day){
+        month++;
+        String fecha = "";
+        if (day<10) {
+            fecha = fecha + "0";
+        }
+        fecha = fecha + day + "/";
+        if (month<10) {
+            fecha = fecha + "0";
+        }
+        fecha = fecha + month + "/";
+        fecha = fecha + year;
+        return fecha;
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.campo_fecha_nacimiento:
-                DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.setCampo(campoFecha);
-                newFragment.show(getSupportFragmentManager(), "Fecha de nacimiento");
+                //DatePickerFragment newFragment = new DatePickerFragment();
+                //newFragment.setCampo(campoFecha);
+                //newFragment.show(getSupportFragmentManager(), "Fecha de nacimiento");
                 break;
 
             case R.id.btn_registrar_usuario:
 
                 String codPais = campoNacionalidad.getSelectedCountryNameCode();
-                String fecha = campoFecha.getText().toString();
+                int  anno = campoFecha.getYear();
+                int mes = campoFecha.getMonth();
+                int dia = campoFecha.getDayOfMonth();
+
+                String fecha = formatDate(anno, mes, dia);
 
                 if (this.id == -1) {
                     Application.getMiApplication(getApplicationContext()).anadirUsuario(nombre, DNI, tlf, fecha, codPais);

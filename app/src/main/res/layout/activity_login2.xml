@@ -19,7 +19,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.583" />
+        app:layout_constraintVertical_bias="0.678" />
 
     <Button
         android:id="@+id/btn_registrar_usuario"
@@ -50,21 +50,24 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.359" />
+        app:layout_constraintVertical_bias="0.264" />
 
-    <EditText
+    <DatePicker
         android:id="@+id/campo_fecha_nacimiento"
-        android:layout_width="291dp"
-        android:layout_height="49dp"
-        android:layout_marginTop="308dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="224dp"
+        android:calendarViewShown="false"
         android:clickable="true"
+        android:datePickerMode="spinner"
         android:focusable="false"
         android:inputType="date"
         android:maxLines="1"
+        android:spinnersShown="true"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:onClick="onClick"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.hbb20.CountryCodePicker
         android:id="@+id/campo_nacionalidad"
@@ -72,19 +75,19 @@
         android:layout_height="49dp"
         android:ems="10"
         android:fontFamily="sans-serif-light"
-        app:ccp_showFullName="true"
         app:ccp_autoDetectLanguage="true"
-        app:ccp_showPhoneCode="false"
-        app:ccp_showNameCode="false"
-        app:ccp_excludedCountries="il"
-        app:ccp_defaultNameCode="ma"
         app:ccp_countryPreference="ma,tn,ly"
+        app:ccp_defaultNameCode="ma"
+        app:ccp_excludedCountries="il"
+        app:ccp_showFullName="true"
+        app:ccp_showNameCode="false"
+        app:ccp_showPhoneCode="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.458"
+        app:layout_constraintHorizontal_bias="0.675"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.668" />
+        app:layout_constraintVertical_bias="0.765" />
 
     <ImageView
         android:id="@+id/imageView4"
