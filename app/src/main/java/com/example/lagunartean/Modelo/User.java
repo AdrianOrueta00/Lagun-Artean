@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 public class User {
 
+    private int id;
     private String nombre;
     private String DNI;
     private String tlf;
@@ -49,7 +50,7 @@ public class User {
 
         Calendar c = Calendar.getInstance();
         int diaActual = c.get(Calendar.DAY_OF_MONTH);
-        int mesActual = c.get(Calendar.MONTH);
+        int mesActual = c.get(Calendar.MONTH) + 1;
         int annoActual = c.get(Calendar.YEAR);
 
         int edad = annoActual - annoNacimiento;
@@ -73,5 +74,13 @@ public class User {
 
     public void setNacionalidad(String nacionalidad) {
         this.nacionalidad = nacionalidad;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

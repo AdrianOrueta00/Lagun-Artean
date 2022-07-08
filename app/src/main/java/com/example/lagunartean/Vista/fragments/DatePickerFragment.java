@@ -35,6 +35,7 @@ public class DatePickerFragment extends DialogFragment
 
         Calendar c = Calendar.getInstance();
         c.set(year, month, day);
+        month++;
         String fecha = "";
         if (day<10) {
             fecha = fecha + "0";

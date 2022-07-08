@@ -21,6 +21,10 @@ public class UserListActivity extends AppCompatActivity {
     @Override
     protected  void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        inicializar();
+    }
+
+    private void inicializar(){
         setContentView(R.layout.activity_user_list);
         getSupportActionBar().hide();
         userRecycler = findViewById(R.id.recycler);
@@ -47,5 +51,9 @@ public class UserListActivity extends AppCompatActivity {
         });
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        inicializar();
+    }
 }

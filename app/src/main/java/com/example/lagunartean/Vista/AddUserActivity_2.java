@@ -19,9 +19,12 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
     private EditText campoFecha;
     private CountryCodePicker campoNacionalidad;
 
+    private int id;
     private String nombre;
     private String DNI;
     private String tlf;
+    private String fNacimiento;
+    private String nacionalidad;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,10 +34,21 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
         campoFecha = findViewById(R.id.campo_fecha_nacimiento);
         campoFecha.setOnClickListener(this);
         campoNacionalidad = findViewById(R.id.campo_nacionalidad);
+        campoNacionalidad.setDefaultCountryUsingNameCode("ma");
+        campoNacionalidad.setCountryPreference("ma, tn, ly");
         //campoNacionalidad.setOnClickListener(this);
         this.nombre = getIntent().getStringExtra("nombre");
         this.DNI = getIntent().getStringExtra("DNI");
         this.tlf = getIntent().getStringExtra("tlf");
+
+        this.id = getIntent().getIntExtra("id", -1);
+        if (this.id != -1){
+            this.fNacimiento = getIntent().getStringExtra("fNacimiento");
+            this.nacionalidad = getIntent().getStringExtra("nacionalidad");
+            campoFecha.setText(this.fNacimiento);
+            campoNacionalidad.setDefaultCountryUsingNameCode(this.nacionalidad);
+            campoNacionalidad.resetToDefaultCountry();
+        }
 
     }
 
@@ -52,11 +66,19 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
                 String codPais = campoNacionalidad.getSelectedCountryNameCode();
                 String fecha = campoFecha.getText().toString();
 
-                Application.getMiApplication(getApplicationContext()).anadirUsuario(nombre, DNI, tlf, fecha, codPais);
+                if (this.id == -1) {
+                    Application.getMiApplication(getApplicationContext()).anadirUsuario(nombre, DNI, tlf, fecha, codPais);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                else{
+                    Application.getMiApplication(getApplicationContext()).actualizarUsuario(id, nombre, DNI, tlf, fecha, codPais);
+                    Intent intent = new Intent("finish_activity");
+                    sendBroadcast(intent);
+                    finish();
+                }
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
 
                 break;
         }

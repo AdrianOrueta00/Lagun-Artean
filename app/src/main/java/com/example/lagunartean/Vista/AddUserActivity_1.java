@@ -2,18 +2,38 @@ package com.example.lagunartean.Vista;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.example.lagunartean.Modelo.Application;
 import com.example.lagunartean.R;
+
+import java.util.ArrayList;
 
 public class AddUserActivity_1 extends AppCompatActivity implements View.OnClickListener {
 
     private EditText campoNombre;
     private EditText campoDNI;
     private EditText campoTlf;
+
+    private int id;
+    private ArrayList<String> datos;
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context arg0, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals("finish_activity")) {
+                finish();
+            }
+        }
+    };
 
 
     @Override
@@ -26,6 +46,15 @@ public class AddUserActivity_1 extends AppCompatActivity implements View.OnClick
         campoDNI = (EditText) findViewById(R.id.campo_dni);
         campoTlf = (EditText) findViewById(R.id.campo_tlf);
 
+        this.id = getIntent().getIntExtra("id", -1);
+        if (this.id != -1){
+            datos = Application.getMiApplication(this).getDatos(this.id);
+            campoNombre.setText(datos.get(0));
+            campoDNI.setText(datos.get(1));
+            campoTlf.setText(datos.get(2));
+        }
+
+        registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
     }
 
     @Override
@@ -34,11 +63,16 @@ public class AddUserActivity_1 extends AppCompatActivity implements View.OnClick
             case R.id.btn_siguiente:
 
                 Intent miIntent = new Intent(AddUserActivity_1.this, AddUserActivity_2.class);
+                miIntent.putExtra("id", this.id);
                 miIntent.putExtra("nombre", campoNombre.getText().toString());
                 miIntent.putExtra("DNI", campoDNI.getText().toString());
                 miIntent.putExtra("tlf", campoTlf.getText().toString());
-
+                if (this.id != -1) {
+                    miIntent.putExtra("fNacimiento", datos.get(3));
+                    miIntent.putExtra("nacionalidad", datos.get(4));
+                }
                 startActivity(miIntent);
+
         }
     }
 }
