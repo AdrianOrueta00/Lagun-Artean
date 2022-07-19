@@ -28,7 +28,7 @@ public class UserListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_list);
         getSupportActionBar().hide();
         userRecycler = findViewById(R.id.recycler);
-        Application.getMiApplication(this).mostrarUsuarios(userRecycler, "",this);
+        Application.getMiApplication(this).mostrarUsuarios(userRecycler, "",this, false);
 
 
         searchBar = findViewById(R.id.barra_busqueda);
@@ -41,7 +41,7 @@ public class UserListActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                Application.getMiApplication(getApplicationContext()).mostrarUsuarios(userRecycler, searchBar.getText().toString(), getApplicationContext());
+                Application.getMiApplication(getApplicationContext()).mostrarUsuarios(userRecycler, searchBar.getText().toString(), getApplicationContext(), false);
             }
 
             @Override

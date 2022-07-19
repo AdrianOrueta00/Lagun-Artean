@@ -15,8 +15,6 @@ public class UserList {
             this.lUsuarios = new ArrayList<User>();
             this.length = 0;
         }
-
-
     }
 
 
@@ -30,13 +28,6 @@ public class UserList {
 
         lUsuarios.add(miUsuario);
         length++;
-
-        System.out.println("NUEVO USUARIO:");
-        System.out.println("Nombre: " + miUsuario.getNombre());
-        System.out.println("DNI: " + miUsuario.getDNI());
-        System.out.println("Tlf: " + miUsuario.getTlf());
-        System.out.println("Edad: " + miUsuario.getEdad());
-        System.out.println("Nacionalidad: " + miUsuario.getNacionalidad());
     }
 
     public UserList filtrarNacionalidad(String pNacionalidad){

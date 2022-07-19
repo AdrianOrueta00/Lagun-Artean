@@ -10,6 +10,7 @@ public class User {
     private String tlf;
     private String fNacimiento;
     private String nacionalidad;
+    private boolean checked;
 
     public User(){
         nombre = "";
@@ -17,6 +18,7 @@ public class User {
         tlf = "";
         fNacimiento = "";
         nacionalidad = "";
+        checked = false;
     }
 
     public String getNombre() {
@@ -82,5 +84,13 @@ public class User {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 }

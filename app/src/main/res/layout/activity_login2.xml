@@ -27,7 +27,7 @@
         android:layout_height="50dp"
         android:backgroundTint="#0a73ad"
         android:fontFamily="sans-serif-smallcaps"
-        android:text="Registrar"
+        android:text="Guardar"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"

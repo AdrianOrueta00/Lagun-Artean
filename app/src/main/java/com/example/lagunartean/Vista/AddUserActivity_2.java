@@ -52,20 +52,7 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
 
     }
 
-    public String formatDate(int year, int month, int day){
-        month++;
-        String fecha = "";
-        if (day<10) {
-            fecha = fecha + "0";
-        }
-        fecha = fecha + day + "/";
-        if (month<10) {
-            fecha = fecha + "0";
-        }
-        fecha = fecha + month + "/";
-        fecha = fecha + year;
-        return fecha;
-    }
+
 
     @Override
     public void onClick(View view) {
@@ -83,7 +70,7 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
                 int mes = campoFecha.getMonth();
                 int dia = campoFecha.getDayOfMonth();
 
-                String fecha = formatDate(anno, mes, dia);
+                String fecha = Application.getMiApplication(this).formatDate(anno, mes, dia);
 
                 if (this.id == -1) {
                     Application.getMiApplication(getApplicationContext()).anadirUsuario(nombre, DNI, tlf, fecha, codPais);

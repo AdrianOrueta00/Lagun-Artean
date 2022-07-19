@@ -35,6 +35,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 startActivity(miIntent2);
                 break;
+
+            case R.id.btn_servicios:
+
+                Intent miIntent3 = new Intent(MainActivity.this, ServicesActivity.class);
+
+                startActivity(miIntent3);
+
+                break;
         }
     }
 }

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lagunartean.Modelo.Application;
+import com.example.lagunartean.Modelo.UserList;
 import com.example.lagunartean.R;
 import com.example.lagunartean.Vista.AddUserActivity_1;
 import com.example.lagunartean.Vista.UserViewHolder;
@@ -20,17 +21,11 @@ import java.util.ArrayList;
 public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     private Context ctx;
-    private ArrayList<String> nombres;
-    private ArrayList<String> telefonos;
-    private ArrayList<String> edades;
-    private ArrayList<Integer> ids;
+    private UserList usuarios;
 
-    public UsersAdapter(Context pContexto, ArrayList<String> pNombres, ArrayList<String> pTelefonos, ArrayList<String> pEdades, ArrayList<Integer> pIds){
+    public UsersAdapter(Context pContexto, UserList pUsusarios){
         ctx = pContexto;
-        nombres = pNombres;
-        telefonos = pTelefonos;
-        edades = pEdades;
-        ids = pIds;
+        usuarios = pUsusarios;
     }
 
     @NonNull
@@ -43,7 +38,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
                 RecyclerView r = parent.findViewById(R.id.recycler);
                 int pos = r.getChildAdapterPosition(view);
                 Intent miIntent = new Intent(ctx, AddUserActivity_1.class);
-                miIntent.putExtra("id", ids.get(pos));
+                miIntent.putExtra("id", usuarios.get(pos).getId());
                 ctx.startActivity(miIntent);
             }
         });
@@ -52,13 +47,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        holder.txtNombre.setText(nombres.get(position));
-        holder.txtTlf.setText(telefonos.get(position));
-        holder.txtEdad.setText(edades.get(position));
+        holder.txtNombre.setText(usuarios.get(position).getNombre());
+        holder.txtTlf.setText(usuarios.get(position).getTlf());
+        holder.txtEdad.setText(usuarios.get(position).getEdad());
     }
 
     @Override
     public int getItemCount() {
-        return nombres.size();
+        return usuarios.getLength();
     }
 }
