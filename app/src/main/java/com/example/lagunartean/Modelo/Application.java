@@ -29,10 +29,12 @@ public class Application {
     private static Application miApplication;
     private UserList lUsuarios;
     private DatabaseAdapter db;
+    private String filtro;
 
     private Application(Context pContext){
         db = new DatabaseAdapter(pContext.getApplicationContext(), "LagunArtean", null, 2);
         lUsuarios = new UserList(db.cargarUsuarios());
+        filtro = "";
     }
 
     public static Application getMiApplication(Context pContext){
@@ -52,14 +54,16 @@ public class Application {
 
     public void mostrarUsuarios(RecyclerView pLista, String pFiltro, Context pContext, boolean pServices){
         lUsuarios = new UserList(db.cargarUsuarios());
+        filtro = pFiltro;
 
         pLista.setLayoutManager(new LinearLayoutManager(pContext));
+        UserList listaFiltrada = lUsuarios.filtrarNombre(filtro);
         if (pServices){
-            ServiceAdapter serviceAdapter = new ServiceAdapter(pContext, lUsuarios);
+            ServiceAdapter serviceAdapter = new ServiceAdapter(pContext, listaFiltrada);
             pLista.setAdapter(serviceAdapter);
         }
         else {
-            UsersAdapter usersAdapter = new UsersAdapter(pContext, lUsuarios);
+            UsersAdapter usersAdapter = new UsersAdapter(pContext, listaFiltrada);
             pLista.setAdapter(usersAdapter);
         }
     }
@@ -165,8 +169,9 @@ public class Application {
     public Integer getPositionOfCheckedUser(){
         Integer posSeleccionada = null;
         User usuarioActual;
-        for (int i = 0; i < lUsuarios.getLength(); i++) {
-            usuarioActual = lUsuarios.get(i);
+        UserList listaFiltrada = lUsuarios.filtrarNombre(filtro);
+        for (int i = 0; i < listaFiltrada.getLength(); i++) {
+            usuarioActual = listaFiltrada.get(i);
             if (usuarioActual.isChecked()) {
                 if (posSeleccionada == null) {
                     posSeleccionada = i;

@@ -66,6 +66,10 @@ public class User {
         return String.valueOf(edad);
     }
 
+    public String getfNacimiento(){
+        return this.fNacimiento;
+    }
+
     public void setFNacimiento(String fNacimiento) {
         this.fNacimiento = fNacimiento;
     }

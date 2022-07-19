@@ -1,6 +1,7 @@
 package com.example.lagunartean.Modelo;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class UserList {
     private ArrayList<User> lUsuarios;
@@ -30,6 +31,11 @@ public class UserList {
         length++;
     }
 
+    public void anadirUsuario(User pUsuario){
+        lUsuarios.add(pUsuario);
+        length++;
+    }
+
     public UserList filtrarNacionalidad(String pNacionalidad){
         //TODO
         return null;
@@ -38,6 +44,16 @@ public class UserList {
     public UserList filtrarEdad(int pEdad){
         //TODO
         return null;
+    }
+
+    public UserList filtrarNombre(String pFiltro){
+        UserList resultadoBusqueda = new UserList(new ArrayList<User>());
+        for (int i=0;i<lUsuarios.size();i++){
+            if (lUsuarios.get(i).getNombre().toLowerCase(Locale.ROOT).contains(pFiltro.toLowerCase(Locale.ROOT))) {
+                resultadoBusqueda.anadirUsuario(lUsuarios.get(i));
+            }
+        }
+        return resultadoBusqueda;
     }
 
     public int getLength() {

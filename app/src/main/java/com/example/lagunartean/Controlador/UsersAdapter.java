@@ -39,6 +39,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
                 int pos = r.getChildAdapterPosition(view);
                 Intent miIntent = new Intent(ctx, AddUserActivity_1.class);
                 miIntent.putExtra("id", usuarios.get(pos).getId());
+                miIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 ctx.startActivity(miIntent);
             }
         });
