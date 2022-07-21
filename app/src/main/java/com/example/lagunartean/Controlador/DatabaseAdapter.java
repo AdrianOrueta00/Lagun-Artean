@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import com.example.lagunartean.Modelo.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class DatabaseAdapter extends SQLiteOpenHelper {
@@ -159,5 +160,194 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
         values.put(CAMPO_FECHA_RESERVA, pFecha);
         db.insert(TABLA_DUCHAS, null, values);
         db.close();
+    }
+
+    public ArrayList<String> getAnnos(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Integer> annos = new ArrayList<Integer>();
+        ArrayList<String> annosStrings = new ArrayList<String>();
+        String annoActual;
+        Cursor cursor1 = db.rawQuery("SELECT DISTINCT " + CAMPO_FECHA_RESERVA + " FROM " + TABLA_LAVANDERIA, null);
+        while (cursor1.moveToNext()){
+            annoActual = cursor1.getString(0).substring(6);
+            if (!annos.contains(Integer.valueOf(annoActual))) {
+                annos.add(Integer.valueOf(annoActual));
+            }
+        }
+        Cursor cursor2 = db.rawQuery("SELECT DISTINCT " + CAMPO_FECHA_RESERVA + " FROM " + TABLA_DUCHAS, null);
+        while (cursor2.moveToNext()){
+            annoActual = cursor2.getString(0).substring(6);
+            if (!annos.contains(Integer.valueOf(annoActual))) {
+                annos.add(Integer.valueOf(annoActual));
+            }
+        }
+        Collections.sort(annos);
+
+        for (int i = 0; i < annos.size(); i++){
+            annosStrings.add(annos.get(i).toString());
+        }
+        return annosStrings;
+    }
+
+    public ArrayList<Integer> getDesgloseAnno(ArrayList<Integer> pIds, String pAnno, String pServicio){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Integer> datos = new ArrayList<Integer>();
+        ArrayList<Boolean> apariciones;
+        ArrayList<String> annosStrings = new ArrayList<String>();
+        if (!pAnno.equals("Todos")){
+            for (int j = 0; j < 13; j++){
+                datos.add(0);
+            }
+        }
+        else{
+            annosStrings = this.getAnnos();
+            for (int j = 0; j < annosStrings.size() + 1; j++){
+                datos.add(0);
+            }
+
+        }
+
+
+
+
+        for (int i = 0; i < pIds.size(); i++) {
+
+            //Damos forma al arraylist que devolveremos como resultado
+            apariciones = new ArrayList<Boolean>();
+            if (!pAnno.equals("Todos")){
+                for (int j = 0; j < 13; j++){
+                    apariciones.add(false);
+                }
+            }
+            else{
+                annosStrings = this.getAnnos();
+                for (int j = 0; j < annosStrings.size() + 1; j++){
+                    apariciones.add(false);
+                }
+
+            }
+
+            String baseQuery = "SELECT " + TABLA_USUARIO + "." + CAMPO_ID + ", " + CAMPO_FECHA_RESERVA + " FROM " + TABLA_USUARIO;
+
+            String queryDuchas = baseQuery + " INNER JOIN " + TABLA_DUCHAS + " ON " + TABLA_USUARIO + "." + CAMPO_ID + "=" + TABLA_DUCHAS + "." + CAMPO_ID;
+            String queryLavanderia = baseQuery + " INNER JOIN " + TABLA_LAVANDERIA + " ON " + TABLA_USUARIO + "." + CAMPO_ID + "=" + TABLA_LAVANDERIA + "." + CAMPO_ID;
+
+            queryDuchas = queryDuchas + " WHERE " + TABLA_USUARIO + "." + CAMPO_ID + "=" + pIds.get(i);
+            queryLavanderia = queryLavanderia + " WHERE " + TABLA_USUARIO + "." + CAMPO_ID + "=" + pIds.get(i);
+
+
+
+            if (pServicio.equals("Duchas")) {
+                Cursor cursor = db.rawQuery(queryDuchas, null);
+                if (!pAnno.equals("Todos")){ //Si se nos pide un anno concreto
+
+                    int mesActual;
+                    while (cursor.moveToNext()) {
+                        if (cursor.getString(1).substring(6).equals(pAnno)) {
+                            mesActual = Integer.valueOf(cursor.getString(1).substring(3, 5)) - 1;
+                            apariciones.set(mesActual, true);
+                            apariciones.set(12, true);
+                        }
+                    }
+                }
+                else{ //Si se nos piden todos los annos
+                    String annoQuery;
+                    String annoListado;
+                    while (cursor.moveToNext()) {
+                        annoQuery = cursor.getString(1).substring(6);
+                        for (int j = 0; j < annosStrings.size(); j++){
+                            annoListado = annosStrings.get(j);
+                            if (annoQuery.equals(annoListado)) {
+                                apariciones.set(j, true);
+                                apariciones.set(apariciones.size() - 1, true);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (pServicio.equals("Lavandería")) {
+                Cursor cursor = db.rawQuery(queryLavanderia, null);
+                if (!pAnno.equals("Todos")){
+
+                    int mesActual;
+                    while (cursor.moveToNext()) {
+                        if (cursor.getString(1).substring(6).equals(pAnno)) {
+                            mesActual = Integer.valueOf(cursor.getString(1).substring(3, 5)) - 1;
+                            apariciones.set(mesActual, true);
+                            apariciones.set(12, true);
+                        }
+                    }
+                }
+                else{ //Si se nos piden todos los annos
+                    String annoQuery;
+                    String annoListado;
+                    while (cursor.moveToNext()) {
+                        annoQuery = cursor.getString(1).substring(6);
+                        for (int j = 0; j < annosStrings.size(); j++){
+                            annoListado = annosStrings.get(j);
+                            if (annoQuery.equals(annoListado)) {
+                                apariciones.set(j, true);
+                                apariciones.set(apariciones.size() - 1, true);
+                            }
+                        }
+                    }
+                }
+            }
+            else{
+                Cursor cursor1 = db.rawQuery(queryDuchas, null);
+                Cursor cursor2 = db.rawQuery(queryLavanderia, null);
+                if (!pAnno.equals("Todos")){
+
+                    int mesActual;
+                    while (cursor1.moveToNext()) {
+                        if (cursor1.getString(1).substring(6).equals(pAnno)) {
+                            mesActual = Integer.valueOf(cursor1.getString(1).substring(3, 5)) - 1;
+                            apariciones.set(mesActual, true);
+                            apariciones.set(12, true);
+                        }
+                    }
+                    while (cursor2.moveToNext()) {
+                        if (cursor2.getString(1).substring(6).equals(pAnno)) {
+                            mesActual = Integer.valueOf(cursor2.getString(1).substring(3, 5)) - 1;
+                            apariciones.set(mesActual, true);
+                            apariciones.set(12, true);
+                        }
+                    }
+                }
+                else{ //Si se nos piden todos los annos
+                    String annoQuery;
+                    String annoListado;
+                    while (cursor1.moveToNext()) {
+                        annoQuery = cursor1.getString(1).substring(6);
+                        for (int j = 0; j < annosStrings.size(); j++){
+                            annoListado = annosStrings.get(j);
+                            if (annoQuery.equals(annoListado)) {
+                                apariciones.set(j, true);
+                                apariciones.set(apariciones.size() - 1, true);
+                            }
+                        }
+                    }
+                    while (cursor2.moveToNext()) {
+                        annoQuery = cursor2.getString(1).substring(6);
+                        for (int j = 0; j < annosStrings.size(); j++){
+                            annoListado = annosStrings.get(j);
+                            if (annoQuery.equals(annoListado)) {
+                                apariciones.set(j, true);
+                                apariciones.set(apariciones.size() - 1, true);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            //Sumamos 1 a cada posicion del vector resultado si hay al menos una aparicion
+            for (int j = 0; j < apariciones.size(); j++){
+                if (apariciones.get(j)){
+                    datos.set(j, datos.get(j) + 1);
+                }
+            }
+        }
+        return datos;
     }
 }

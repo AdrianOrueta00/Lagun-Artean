@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:text="Reserva de Servicios Abiertos"
+        android:text="Consulta de Datos"
         android:textColor="#808080"
         android:textAlignment="center"
         android:textSize="25dp"
@@ -25,30 +25,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp">
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1"></Space>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"></Space>
 
-        <TextView
+        <CheckBox
+            android:id="@+id/checkbox_data"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></CheckBox>
+
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/selector_pais_data"
             android:layout_height="wrap_content"
-            android:text="Nacionalidad: "
-            android:textSize="20sp"></TextView>
+            android:layout_width="wrap_content"
+            app:ccp_showPhoneCode="false"
+            app:ccp_excludedCountries="il"
+            android:layout_marginTop="5dp"
+            app:ccp_clickable="false"
+            app:ccp_autoDetectLanguage="true">
+        </com.hbb20.CountryCodePicker>
 
-    <Spinner
-        android:id="@+id/spinner_nacionalidad"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        tools:layout_editor_absoluteX="0dp" />
-
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1"></Space>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"></Space>
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,7 +64,6 @@
             android:id="@+id/spinner_edad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             tools:layout_editor_absoluteX="0dp" />
 
         <Space
@@ -102,20 +105,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mes: "
+            android:text="Servicio: "
             android:textSize="20sp"></TextView>
 
         <Spinner
-            android:id="@+id/spinner_mes"
+            android:id="@+id/spinner_servicio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
             tools:layout_editor_absoluteX="0dp" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1"></Space>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -137,4 +136,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.963" />
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="300dp"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_consultar_datos">
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barchart_data"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+    </com.github.mikephil.charting.charts.BarChart>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

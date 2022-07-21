@@ -37,13 +37,29 @@ public class UserList {
     }
 
     public UserList filtrarNacionalidad(String pNacionalidad){
-        //TODO
-        return null;
+        UserList resultado = new UserList(new ArrayList<User>());
+        User usuarioActual;
+        for (int i = 0; i < lUsuarios.size(); i++){
+            usuarioActual = lUsuarios.get(i);
+            if (usuarioActual.getNacionalidad().equals(pNacionalidad)){
+                resultado.anadirUsuario(usuarioActual);
+            }
+        }
+
+        return resultado;
     }
 
-    public UserList filtrarEdad(int pEdad){
-        //TODO
-        return null;
+    public UserList filtrarEdad(String pEdad){
+        UserList resultado = new UserList(new ArrayList<User>());
+        User usuarioActual;
+        for (int i = 0; i < lUsuarios.size(); i++){
+            usuarioActual = lUsuarios.get(i);
+            if (usuarioActual.getEdad().equals(pEdad)){
+                resultado.anadirUsuario(usuarioActual);
+            }
+        }
+
+        return resultado;
     }
 
     public UserList filtrarNombre(String pFiltro){

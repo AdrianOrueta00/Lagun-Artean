@@ -22,6 +22,7 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 
 public class Application {
@@ -32,7 +33,7 @@ public class Application {
     private String filtro;
 
     private Application(Context pContext){
-        db = new DatabaseAdapter(pContext.getApplicationContext(), "LagunArtean", null, 2);
+        db = new DatabaseAdapter(pContext.getApplicationContext(), "LagunArtean", null, 3);
         lUsuarios = new UserList(db.cargarUsuarios());
         filtro = "";
     }
@@ -181,5 +182,53 @@ public class Application {
             }
         }
         return posSeleccionada;
+    }
+
+    public ArrayList<String> getEdades(){
+        ArrayList<Integer> edades = new ArrayList<Integer>();
+        int edadActual;
+        for (int i = 0; i < lUsuarios.getLength(); i++){
+            edadActual = Integer.valueOf(lUsuarios.get(i).getEdad());
+            if (!edades.contains(edadActual)) {
+                edades.add(Integer.valueOf(edadActual));
+            }
+        }
+        Collections.sort(edades);
+
+        ArrayList<String> edadesStrings = new ArrayList<String>();
+        edadesStrings.add("Todas");
+        for (int i = 0; i < edades.size(); i++){
+            edadesStrings.add(edades.get(i).toString());
+        }
+        return edadesStrings;
+    }
+
+    public ArrayList<String> getAnnos(){
+        ArrayList<String> annosQuery = db.getAnnos();
+
+
+        ArrayList<String> annosStrings = new ArrayList<String>();
+        annosStrings.add("Todos");
+        for (int i = 0; i < annosQuery.size(); i++){
+            annosStrings.add(annosQuery.get(i).toString());
+        }
+        return annosStrings;
+    }
+
+    public ArrayList<Integer> getDatosPlot(String pNacionalidad, String pEdad, String pAnno, String pServicio){
+        UserList listaFiltrada = lUsuarios;
+        if (pNacionalidad != null){
+            listaFiltrada = listaFiltrada.filtrarNacionalidad(pNacionalidad);
+        }
+        if (!pEdad.equals("Todas")){
+            listaFiltrada = listaFiltrada.filtrarEdad(pEdad);
+        }
+
+        ArrayList<Integer> idsConsulta = new ArrayList<Integer>();
+        for (int i = 0; i < listaFiltrada.getLength(); i++){
+            idsConsulta.add(listaFiltrada.get(i).getId());
+        }
+
+        return db.getDesgloseAnno(idsConsulta, pAnno, pServicio);
     }
 }
