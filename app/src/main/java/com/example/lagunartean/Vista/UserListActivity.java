@@ -1,5 +1,6 @@
 package com.example.lagunartean.Vista;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,9 +26,11 @@ public class UserListActivity extends AppCompatActivity {
     }
 
     private void inicializar(){
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_user_list);
         getSupportActionBar().hide();
         userRecycler = findViewById(R.id.recycler);
+        //Construimos recyclerview
         Application.getMiApplication(this).mostrarUsuarios(userRecycler, "",this, false);
 
 
@@ -40,7 +43,7 @@ public class UserListActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                //Volvemos a construir el recyclerview cada vez que se edita el texto de la barra de busqueda, pasando como parametro filtro el texto
                 Application.getMiApplication(getApplicationContext()).mostrarUsuarios(userRecycler, searchBar.getText().toString(), getApplicationContext(), false);
             }
 

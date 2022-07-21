@@ -1,6 +1,7 @@
 package com.example.lagunartean.Vista;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -35,11 +36,13 @@ public class ServicesActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void inicializar(){
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_services);
         getSupportActionBar().hide();
         selector = findViewById(R.id.radio_servicios);
         btnSiguiente = findViewById(R.id.btn_ver_fechas);
         serviceRecycler = findViewById(R.id.recycler_servicios);
+        //Construimos recyclerview
         Application.getMiApplication(this).mostrarUsuarios(serviceRecycler, "",this, true);
 
 
@@ -52,7 +55,7 @@ public class ServicesActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                //Volvemos a construir el recyclerview cada vez que se edita el texto de la barra de busqueda, pasando como parametro filtro el texto
                 Application.getMiApplication(getApplicationContext()).mostrarUsuarios(serviceRecycler, searchBar.getText().toString(), getApplicationContext(), true);
             }
 
@@ -77,30 +80,7 @@ public class ServicesActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View view) {
         Integer posSeleccionada = Application.getMiApplication(this).getPositionOfCheckedUser();
-        /*
-        int i = 0;
-        while (i < serviceRecycler.getAdapter().getItemCount()) {
-            //View v = serviceRecycler.getChildAt(i);
-            //CheckBox casilla = v.findViewById(R.id.user_selection);
-            holder = (UserServiceViewHolder) serviceRecycler.findViewHolderForAdapterPosition(i);
-            if (holder != null) {
-                if (holder.selectorUsuario.isChecked()) {
-                    if (posSeleccionada == null) {
-                        posSeleccionada = i;
-                    } else {
-                        posSeleccionada = -1;
-                    }
-                }
-            } else {
-                //LinearLayoutManager llm = (LinearLayoutManager) serviceRecycler.getLayoutManager();
-                //llm.scrollToPositionWithOffset(i, 0);
-                serviceRecycler.smoothScrollToPosition(i);
-                scroll = true;
-            }
-            i++;
-
-
-        }*/
+        //Miramos que usuario esta seleccionado
 
         if (posSeleccionada == null) {
             Toast.makeText(this, "Selecciona al menos un usuario", Toast.LENGTH_SHORT).show();

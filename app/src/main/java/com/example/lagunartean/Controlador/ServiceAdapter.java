@@ -46,6 +46,8 @@ public class ServiceAdapter extends RecyclerView.Adapter<UserServiceViewHolder> 
         holder.selectorUsuario.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                //Cambia el atributo checked del usuario correspondiente en la lista de
+                //Reserva de los servicios
                 usuarios.get(holder.getAdapterPosition()).setChecked(b);
             }
         });

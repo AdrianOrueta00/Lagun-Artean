@@ -1,6 +1,7 @@
 package com.example.lagunartean.Vista;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
@@ -25,6 +26,7 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_login2);
         getSupportActionBar().hide();
 
@@ -33,11 +35,11 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
         campoNacionalidad = findViewById(R.id.campo_nacionalidad);
         campoNacionalidad.setDefaultCountryUsingNameCode("ma");
         campoNacionalidad.setCountryPreference("ma, tn, ly");
-        //campoNacionalidad.setOnClickListener(this);
         this.nombre = getIntent().getStringExtra("nombre");
         this.DNI = getIntent().getStringExtra("DNI");
         this.tlf = getIntent().getStringExtra("tlf");
 
+        //Comprobamos si estamos editando un usuario existente o creando uno nuevo
         this.id = getIntent().getIntExtra("id", -1);
         if (this.id != -1){
             this.fNacimiento = getIntent().getStringExtra("fNacimiento");
@@ -57,11 +59,6 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.campo_fecha_nacimiento:
-                //DatePickerFragment newFragment = new DatePickerFragment();
-                //newFragment.setCampo(campoFecha);
-                //newFragment.show(getSupportFragmentManager(), "Fecha de nacimiento");
-                break;
 
             case R.id.btn_registrar_usuario:
 
@@ -70,8 +67,10 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
                 int mes = campoFecha.getMonth();
                 int dia = campoFecha.getDayOfMonth();
 
+                //Damos formato a la fecha de nacimiento
                 String fecha = Application.getMiApplication(this).formatDate(anno, mes, dia);
 
+                //Guardamos los cambios
                 if (this.id == -1) {
                     Application.getMiApplication(getApplicationContext()).anadirUsuario(nombre, DNI, tlf, fecha, codPais);
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);

@@ -1,5 +1,6 @@
 package com.example.lagunartean.Vista;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -46,6 +47,7 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_data);
         getSupportActionBar().hide();
 
@@ -109,7 +111,9 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_consultar_datos:
+                //Conseguimos datos
                 ArrayList<Integer> r = Application.getMiApplication(this).getDatosPlot(nacionalidad, campoEdad.getSelectedItem().toString(), campoAnno.getSelectedItem().toString(), campoServicio.getSelectedItem().toString());
+                //Ponemos los datos en un formato adecuado para la libreria de graficos
                 ArrayList<BarEntry> s = new ArrayList<BarEntry>();
                 ArrayList<String> annos = Application.getMiApplication(this).getAnnos();
                 String[] annosArray = new String[r.size()];
@@ -124,6 +128,7 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
+                //Introducimos los datos en el grafico y hacemos otras inicializaciones
                 BarDataSet dataset = new BarDataSet(s, null);
                 dataset.setColor(ContextCompat.getColor(this, R.color.LA_blue));
                 BarData barData = new BarData(dataset);
@@ -147,6 +152,7 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 campoPlot.getXAxis().setGranularity(1f);
                 campoPlot.getLegend().setEnabled(false);
+                //Representamos grafico
                 campoPlot.invalidate();
 
                 break;

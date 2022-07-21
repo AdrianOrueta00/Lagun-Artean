@@ -29,10 +29,6 @@ public class User {
         this.nombre = nombre;
     }
 
-    public String getDNI() {
-        return DNI;
-    }
-
     public void setDNI(String DNI) {
         this.DNI = DNI;
     }
@@ -46,6 +42,7 @@ public class User {
     }
 
     public String getEdad() {
+        //Se calcula la edad en el momento presente a partir de la fecha de nacimiento
         int diaNacimiento = Integer.parseInt(fNacimiento.substring(0, 2));
         int mesNacimiento = Integer.parseInt(fNacimiento.substring(3, 5));
         int annoNacimiento = Integer.parseInt(fNacimiento.substring(6));
@@ -64,10 +61,6 @@ public class User {
         }
 
         return String.valueOf(edad);
-    }
-
-    public String getfNacimiento(){
-        return this.fNacimiento;
     }
 
     public void setFNacimiento(String fNacimiento) {

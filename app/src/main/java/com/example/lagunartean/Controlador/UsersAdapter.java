@@ -35,6 +35,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Si el usuario clicka en la tarjeta de usuario se abre la pantalla para editar sus datos
                 RecyclerView r = parent.findViewById(R.id.recycler);
                 int pos = r.getChildAdapterPosition(view);
                 Intent miIntent = new Intent(ctx, AddUserActivity_1.class);

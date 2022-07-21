@@ -32,7 +32,7 @@ public class Application {
     private DatabaseAdapter db;
     private String filtro;
 
-    private Application(Context pContext){
+    private Application(Context pContext){ //Patron Singleton
         db = new DatabaseAdapter(pContext.getApplicationContext(), "LagunArtean", null, 3);
         lUsuarios = new UserList(db.cargarUsuarios());
         filtro = "";
@@ -54,16 +54,19 @@ public class Application {
     }
 
     public void mostrarUsuarios(RecyclerView pLista, String pFiltro, Context pContext, boolean pServices){
+        //Representar en el recycler los usuarios correspondientes
+        //Filtrados por texto
         lUsuarios = new UserList(db.cargarUsuarios());
         filtro = pFiltro;
 
         pLista.setLayoutManager(new LinearLayoutManager(pContext));
         UserList listaFiltrada = lUsuarios.filtrarNombre(filtro);
-        if (pServices){
+        if (pServices){ //Si se llama a la funcion desde la pantalla de servicios
+            //(Tienen adaptadores y viewholders distintos)
             ServiceAdapter serviceAdapter = new ServiceAdapter(pContext, listaFiltrada);
             pLista.setAdapter(serviceAdapter);
         }
-        else {
+        else { //Si se llama a la funcion desde la pantalla de listado
             UsersAdapter usersAdapter = new UsersAdapter(pContext, listaFiltrada);
             pLista.setAdapter(usersAdapter);
         }
@@ -77,7 +80,7 @@ public class Application {
         int id = lUsuarios.get(pPos).getId();
         String nombre = lUsuarios.get(pPos).getNombre();
         if (pServicio.equals("ducha")){
-
+            //Si queremos reservar una ducha
             //Generamos un fragment de calendario que restrinja las fechas pasadas
             MaterialDatePicker.Builder builder = MaterialDatePicker.Builder.datePicker();
             builder.setSelection(MaterialDatePicker.todayInUtcMilliseconds());
@@ -86,6 +89,7 @@ public class Application {
             materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
                 @Override
                 public void onPositiveButtonClick(Long selection) {
+                    //Registramos la reserva
                     Calendar c = Calendar.getInstance();
                     c.setTimeInMillis(selection);
                     String fechaString = formatDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
@@ -99,7 +103,7 @@ public class Application {
             materialDatePicker.show(pFM, "");
         }
         else if (pServicio.equals("lavanderia")){
-
+            //Si queremos reservar en la lavanderia
             //Consultamos fechas con 7 o mas reservas
             ArrayList<String> fechasOcupadasString = db.getFechasOcupadasLavanderia(id);
             ArrayList<Long> fechasOcupadas = new ArrayList<Long>();
@@ -108,6 +112,8 @@ public class Application {
             int anno;
             String fActual;
             Calendar c2 = Calendar.getInstance();
+
+            //Generamos un arraylist con todas las fechas ocupadas en formato Long
             for (int i=0; i<fechasOcupadasString.size(); i++){
                 fActual = fechasOcupadasString.get(i);
                 dia = Integer.parseInt(fActual.substring(0, 2));
@@ -127,6 +133,7 @@ public class Application {
             materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
                 @Override
                 public void onPositiveButtonClick(Long selection) {
+                    //Registramos reserva de lavanderia
                     Calendar c = Calendar.getInstance();
                     c.setTimeInMillis(selection);
                     String fechaString = formatDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
@@ -141,11 +148,13 @@ public class Application {
         }
     }
     private CalendarConstraints.Builder lavanderiaConstraints(ArrayList<Long> pFechas) {
+        //Clase necesaria para personalizar restricciones del fragment calendario
         CalendarConstraints.Builder constraintsBuilderRange = new CalendarConstraints.Builder();
         constraintsBuilderRange.setValidator(new ValidadorFechasLavanderia(pFechas));
         return constraintsBuilderRange;
     }
     private CalendarConstraints.Builder duchasConstraints() {
+        //Clase necesaria para personalizar restricciones del fragment calendario
         Calendar c = Calendar.getInstance();
         CalendarConstraints.Builder constraintsBuilderRange = new CalendarConstraints.Builder();
         constraintsBuilderRange.setValidator(DateValidatorPointForward.from(c.getTimeInMillis()));
@@ -153,6 +162,7 @@ public class Application {
     }
 
     public String formatDate(int year, int month, int day){
+        //Pasar de numeros a un String
         month++;
         String fecha = "";
         if (day<10) {
@@ -168,15 +178,16 @@ public class Application {
     }
 
     public Integer getPositionOfCheckedUser(){
+        //Comprueba el atributo checkado de los usuarios que se muestran en el recyclerview
         Integer posSeleccionada = null;
         User usuarioActual;
         UserList listaFiltrada = lUsuarios.filtrarNombre(filtro);
         for (int i = 0; i < listaFiltrada.getLength(); i++) {
             usuarioActual = listaFiltrada.get(i);
             if (usuarioActual.isChecked()) {
-                if (posSeleccionada == null) {
+                if (posSeleccionada == null) { //Si es la primera casilla marcada que encuentra
                     posSeleccionada = i;
-                } else {
+                } else { //Si hay mas de una casilla marcada
                     posSeleccionada = -1;
                 }
             }
@@ -184,7 +195,8 @@ public class Application {
         return posSeleccionada;
     }
 
-    public ArrayList<String> getEdades(){
+    public ArrayList<String> getEdades(){ //Devuelve las edades existentes entre todos los usuarios
+                                          //Ordenadas y sin repetir
         ArrayList<Integer> edades = new ArrayList<Integer>();
         int edadActual;
         for (int i = 0; i < lUsuarios.getLength(); i++){
@@ -203,7 +215,8 @@ public class Application {
         return edadesStrings;
     }
 
-    public ArrayList<String> getAnnos(){
+    public ArrayList<String> getAnnos(){ //Devuelve los annos en los que existen reservas
+                                         //Ordenados y sin repetir
         ArrayList<String> annosQuery = db.getAnnos();
 
 
@@ -217,6 +230,8 @@ public class Application {
 
     public ArrayList<Integer> getDatosPlot(String pNacionalidad, String pEdad, String pAnno, String pServicio){
         UserList listaFiltrada = lUsuarios;
+
+        //filtramos por nacionalidad y edad
         if (pNacionalidad != null){
             listaFiltrada = listaFiltrada.filtrarNacionalidad(pNacionalidad);
         }
@@ -224,6 +239,8 @@ public class Application {
             listaFiltrada = listaFiltrada.filtrarEdad(pEdad);
         }
 
+        //Conseguimos ids y se los pasamos a DatabaseAdapter para que obtenga los datos
+        //Teniendo en cuenta el anno y el servicio seleccionados
         ArrayList<Integer> idsConsulta = new ArrayList<Integer>();
         for (int i = 0; i < listaFiltrada.getLength(); i++){
             idsConsulta.add(listaFiltrada.get(i).getId());

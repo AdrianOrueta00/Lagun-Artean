@@ -14,6 +14,9 @@ public class ValidadorFechasLavanderia implements CalendarConstraints.DateValida
     private ArrayList<Long> fechas;
 
     ValidadorFechasLavanderia(ArrayList<Long> pFechas) {
+        //Se utiliza para restringir las fechas del fragment de calendario
+        //Utilizado para reservar la lavanderia
+        //Pone grises las fechas pasadas y las que tienen 7 reservas o mas
         this.fechas = pFechas;
     }
 
@@ -21,7 +24,7 @@ public class ValidadorFechasLavanderia implements CalendarConstraints.DateValida
     }
 
     @Override
-    public boolean isValid(long date) {
+    public boolean isValid(long date) { //Comprueba si hay menos de 7 reservas
         int i = 0;
         boolean valid = true;
         Calendar start = Calendar.getInstance();

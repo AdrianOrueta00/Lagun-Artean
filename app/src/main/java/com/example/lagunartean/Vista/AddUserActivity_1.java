@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -24,8 +25,8 @@ public class AddUserActivity_1 extends AppCompatActivity implements View.OnClick
     private int id;
     private ArrayList<String> datos;
 
+    //Necesario para cerrar la actividad una vez AddUserActivity_2 haga finish();
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context arg0, Intent intent) {
             String action = intent.getAction();
@@ -39,6 +40,7 @@ public class AddUserActivity_1 extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
 
@@ -46,6 +48,7 @@ public class AddUserActivity_1 extends AppCompatActivity implements View.OnClick
         campoDNI = (EditText) findViewById(R.id.campo_dni);
         campoTlf = (EditText) findViewById(R.id.campo_tlf);
 
+        //Comprobamos si se ha abierto la actividad para registrar un nuevo usuario o editar uno existente
         this.id = getIntent().getIntExtra("id", -1);
         if (this.id != -1){
             datos = Application.getMiApplication(this).getDatos(this.id);
@@ -62,6 +65,7 @@ public class AddUserActivity_1 extends AppCompatActivity implements View.OnClick
         switch (view.getId()) {
             case R.id.btn_siguiente:
 
+                //Pasamos los datos a la segunda actividad de AddUser
                 Intent miIntent = new Intent(AddUserActivity_1.this, AddUserActivity_2.class);
                 miIntent.putExtra("id", this.id);
                 miIntent.putExtra("nombre", campoNombre.getText().toString());
