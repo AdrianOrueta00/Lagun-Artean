@@ -132,7 +132,7 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
         return datos;
     }
 
-    public ArrayList<String> getFechasOcupadasLavanderia(int pId){
+    public ArrayList<String> getFechasOcupadasLavanderia(){
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String> fechas = new ArrayList<String>();
         //De todas las fechas en la tabla lavanderia devuelve las que tienen 7 reservas o mas

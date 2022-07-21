@@ -105,7 +105,7 @@ public class Application {
         else if (pServicio.equals("lavanderia")){
             //Si queremos reservar en la lavanderia
             //Consultamos fechas con 7 o mas reservas
-            ArrayList<String> fechasOcupadasString = db.getFechasOcupadasLavanderia(id);
+            ArrayList<String> fechasOcupadasString = db.getFechasOcupadasLavanderia();
             ArrayList<Long> fechasOcupadas = new ArrayList<Long>();
             int dia;
             int mes;
