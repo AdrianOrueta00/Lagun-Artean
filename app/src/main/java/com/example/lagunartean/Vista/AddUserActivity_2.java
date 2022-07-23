@@ -33,8 +33,6 @@ public class AddUserActivity_2 extends AppCompatActivity implements View.OnClick
         campoFecha = findViewById(R.id.campo_fecha_nacimiento);
         campoFecha.setOnClickListener(this);
         campoNacionalidad = findViewById(R.id.campo_nacionalidad);
-        campoNacionalidad.setDefaultCountryUsingNameCode("ma");
-        campoNacionalidad.setCountryPreference("ma, tn, ly");
         this.nombre = getIntent().getStringExtra("nombre");
         this.DNI = getIntent().getStringExtra("DNI");
         this.tlf = getIntent().getStringExtra("tlf");

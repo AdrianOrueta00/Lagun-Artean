@@ -76,8 +76,6 @@
         android:ems="10"
         android:fontFamily="sans-serif-light"
         app:ccp_autoDetectLanguage="true"
-        app:ccp_countryPreference="ma,tn,ly"
-        app:ccp_defaultNameCode="ma"
         app:ccp_excludedCountries="il"
         app:ccp_showFullName="true"
         app:ccp_showNameCode="false"
