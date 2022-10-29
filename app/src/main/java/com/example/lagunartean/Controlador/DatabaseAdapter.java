@@ -10,12 +10,27 @@ import androidx.annotation.Nullable;
 
 import com.example.lagunartean.Modelo.User;
 
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 
 public class DatabaseAdapter extends SQLiteOpenHelper {
 
+
+    private static final String TABLA_EMPLEADO = "empleados";
+    private static final String CAMPO_NOMEMPLEADO = "nombre";
+    private static final String CAMPO_HASH = "hash";
+    private static final String CAMPO_SAL = "sal";
+    private static final String CAMPO_ADMIN = "administrador";
     private static final String TABLA_USUARIO = "usuarios";
     private static final String TABLA_DUCHAS = "duchas";
     private static final String TABLA_LAVANDERIA = "lavanderia";
@@ -27,7 +42,13 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
     private static final String CAMPO_NACIONALIDAD = "nacionalidad";
     private static final String CAMPO_FECHA_RESERVA = "freserva";
 
-    private static final String MAX_USUARIOS_LAVANDERIA = "7";
+    private static String MAX_USUARIOS_LAVANDERIA = "7";
+
+    private static final String CREAR_TABLA_EMPLEADOS = "CREATE TABLE IF NOT EXISTS " + TABLA_EMPLEADO +
+            "(" + CAMPO_NOMEMPLEADO + " TEXT, " +
+            CAMPO_HASH + " BLOB PRIMARY KEY, " +
+            CAMPO_SAL + " BLOB, " +
+            CAMPO_ADMIN + " INTEGER)";
 
     private static final String CREAR_TABLA_USUARIO = "CREATE TABLE IF NOT EXISTS " + TABLA_USUARIO +
             "(" + CAMPO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -59,17 +80,117 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(CREAR_TABLA_EMPLEADOS);
         sqLiteDatabase.execSQL(CREAR_TABLA_USUARIO);
         sqLiteDatabase.execSQL(CREAR_TABLA_DUCHAS);
         sqLiteDatabase.execSQL(CREAR_TABLA_LAVANDERIA);
+        if (!comprobarEmpleado("Admin", "LA1234", sqLiteDatabase)){
+            insertarEmpleado("Admin", "LA1234", true, sqLiteDatabase);
+        }
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLA_EMPLEADO);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLA_USUARIO);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLA_DUCHAS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLA_LAVANDERIA);
         onCreate(sqLiteDatabase);
+    }
+
+
+    public void insertarEmpleado(String pNombre, String pContrasena, boolean pAdmin, SQLiteDatabase db){
+        //Hasheamos la contrasena
+        SecureRandom random = new SecureRandom();
+        byte[] sal = new byte[16];
+        random.nextBytes(sal);
+        KeySpec spec = new PBEKeySpec(pContrasena.toCharArray(), sal, 65536, 128);
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            byte[] hash = factory.generateSecret(spec).getEncoded();
+
+            //Introducimos los valores en la base de datos
+            ContentValues values = new ContentValues();
+            values.put(CAMPO_NOMEMPLEADO, pNombre);
+            values.put(CAMPO_HASH, hash);
+            values.put(CAMPO_SAL, sal);
+            if (pAdmin){
+                values.put(CAMPO_ADMIN, 1);
+            }
+            else{
+                values.put(CAMPO_ADMIN, 0);
+            }
+
+            db.insert(TABLA_EMPLEADO, null, values);
+
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+            System.out.println("No se pudo anadir el empleado");
+        }
+    }
+
+    public Boolean comprobarEmpleado(String pNombre, String pContrasena, SQLiteDatabase db){
+        //Inicializamos variables
+        Boolean correcto = false;
+        byte[] hashObjetivo;
+        byte[] sal;
+        //Seleccionamos todas las entradas de la base de datos en las que coincida el nombre
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLA_EMPLEADO +
+                " WHERE " + CAMPO_NOMEMPLEADO + "='" + pNombre + "'", null);
+
+        //Por cada entrada generamos un hash a partir de la contrasena dada con la sal almacenada
+        //Y lo comparamos con el hash almacenado (el correcto)
+        while (cursor.moveToNext() && !correcto) {
+            hashObjetivo = cursor.getBlob(1);
+            sal = cursor.getBlob(2);
+            KeySpec spec = new PBEKeySpec(pContrasena.toCharArray(), sal, 65536, 128);
+            SecretKeyFactory factory = null;
+            try {
+                factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+                byte[] hashObtenido = factory.generateSecret(spec).getEncoded();
+                if (Arrays.equals(hashObtenido, hashObjetivo)){
+                    System.out.println("Exito");
+                    correcto = true;
+                }
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
+        }
+        return correcto;
+    }
+
+    public boolean isAdmin(String pNombre, String pContrasena){
+        //Inicializamos variables
+        Boolean admin = null;
+        Boolean correcto = false;
+        byte[] hashObjetivo;
+        byte[] sal;
+        //Seleccionamos todas las entradas de la base de datos en las que coincida el nombre
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLA_EMPLEADO +
+                " WHERE " + CAMPO_NOMEMPLEADO + "='" + pNombre + "'", null);
+
+        //Por cada entrada generamos un hash a partir de la contrasena dada con la sal almacenada
+        //Y lo comparamos con el hash almacenado (el correcto)
+        while (cursor.moveToNext() && !correcto) {
+            hashObjetivo = cursor.getBlob(1);
+            sal = cursor.getBlob(2);
+            KeySpec spec = new PBEKeySpec(pContrasena.toCharArray(), sal, 65536, 128);
+            SecretKeyFactory factory = null;
+            try {
+                factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+                byte[] hashObtenido = factory.generateSecret(spec).getEncoded();
+                if (Arrays.equals(hashObtenido, hashObjetivo)){
+                    System.out.println("Exito");
+                    correcto = true;
+                    admin = (cursor.getInt(3) == 1);
+                }
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
+        }
+        return admin;
     }
 
     public void insertarUsuario(String pNombre, String pDNI, String pTlf, String pFecha, String pNacionalidad){

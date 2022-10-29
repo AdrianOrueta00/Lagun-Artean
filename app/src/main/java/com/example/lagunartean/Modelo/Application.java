@@ -33,7 +33,7 @@ public class Application {
     private String filtro;
 
     private Application(Context pContext){ //Patron Singleton
-        db = new DatabaseAdapter(pContext.getApplicationContext(), "LagunArtean", null, 3);
+        db = new DatabaseAdapter(pContext.getApplicationContext(), "LagunArtean", null, 6);
         lUsuarios = new UserList(db.cargarUsuarios());
         filtro = "";
     }
@@ -247,5 +247,17 @@ public class Application {
         }
 
         return db.getDesgloseAnno(idsConsulta, pAnno, pServicio);
+    }
+
+    public boolean existeEmpleado(String pNombre, String pContrasena){
+        return db.comprobarEmpleado(pNombre, pContrasena, db.getReadableDatabase());
+    }
+
+    public boolean esAdmin(String pNombre, String pContrasena){
+        return db.isAdmin(pNombre, pContrasena);
+    }
+
+    public void anadirEmpleado(String pNombre, String pContrasena){
+        db.insertarEmpleado(pNombre, pContrasena, false, db.getWritableDatabase());
     }
 }

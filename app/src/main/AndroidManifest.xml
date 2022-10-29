@@ -12,11 +12,6 @@
         <activity
             android:name=".Vista.MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Vista.AddUserActivity_1"
@@ -35,6 +30,17 @@
             android:exported="true">
         </activity>
         <activity android:name=".Vista.DataActivity"
+            android:exported="true">
+        </activity>
+        <activity android:name=".Vista.LoginEmployeeActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Vista.SignupEmployeeActivity"
             android:exported="true">
         </activity>
     </application>
