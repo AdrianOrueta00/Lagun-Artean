@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:text="Consulta de Datos"
+        android:text="@string/consulta_de_datos"
         android:textColor="#808080"
         android:textAlignment="center"
         android:textSize="25dp"
@@ -57,7 +57,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edad: "
+            android:text="@string/edad"
             android:textSize="20sp"></TextView>
 
         <Spinner
@@ -87,7 +87,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Año: "
+            android:text="@string/a_o"
             android:textSize="20sp"></TextView>
 
         <Spinner
@@ -105,7 +105,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Servicio: "
+            android:text="@string/servicio"
             android:textSize="20sp"></TextView>
 
         <Spinner
@@ -122,19 +122,19 @@
         android:id="@+id/btn_consultar_datos"
         android:layout_width="200dp"
         android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
         android:backgroundTint="#0a73ad"
         android:fontFamily="sans-serif-smallcaps"
         android:onClick="onClick"
-        android:text="Consultar"
+        android:text="@string/consultar"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"

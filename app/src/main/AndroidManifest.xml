@@ -43,6 +43,12 @@
         <activity android:name=".Vista.SignupEmployeeActivity"
             android:exported="true">
         </activity>
+        <activity android:name=".Vista.SettingsAdminActivity"
+            android:exported="true">
+        </activity>
+        <activity android:name=".Vista.SettingsActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

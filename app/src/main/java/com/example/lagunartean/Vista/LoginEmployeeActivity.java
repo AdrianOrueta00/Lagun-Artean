@@ -35,6 +35,7 @@ public class LoginEmployeeActivity extends AppCompatActivity implements View.OnC
                 String nombre = campoNombre.getText().toString();
                 String contrasena = campoContrasena.getText().toString();
                 if (Application.getMiApplication(this).existeEmpleado(nombre, contrasena)) {
+                    Application.getMiApplication(this).iniciarSesion(nombre, contrasena);
                     Intent miIntent1 = new Intent(LoginEmployeeActivity.this, MainActivity.class);
                     startActivity(miIntent1);
                     finish();

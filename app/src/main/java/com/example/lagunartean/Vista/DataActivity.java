@@ -48,6 +48,7 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        Application.getMiApplication(getApplicationContext()).setIdiomaAplicacion(getApplicationContext());
         setContentView(R.layout.activity_data);
         getSupportActionBar().hide();
 
@@ -87,19 +88,19 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         //Llenar spinner de edades
-        ArrayList<String> edades = Application.getMiApplication(this).getEdades();
+        ArrayList<String> edades = Application.getMiApplication(this).getEdades(this);
         ArrayAdapter<String> spinnerArrayAdapter1 = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, edades);
         campoEdad.setAdapter(spinnerArrayAdapter1);
 
         //Llenar spinner de annos
-        ArrayList<String> annos = Application.getMiApplication(this).getAnnos();
+        ArrayList<String> annos = Application.getMiApplication(this).getAnnos(this);
         ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, annos);
         campoAnno.setAdapter(spinnerArrayAdapter2);
 
         ArrayList<String> opcionesServicios = new ArrayList<String>();
-        opcionesServicios.add("Todos");
-        opcionesServicios.add("Duchas");
-        opcionesServicios.add("Lavandería");
+        opcionesServicios.add(getString(R.string.todos));
+        opcionesServicios.add(getString(R.string.duchas));
+        opcionesServicios.add(getString(R.string.lavanderia));
         ArrayAdapter<String> spinnerArrayAdapter3 = new ArrayAdapter<String>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item, opcionesServicios);
         campoServicio.setAdapter(spinnerArrayAdapter3);
 
@@ -115,12 +116,12 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
                 ArrayList<Integer> r = Application.getMiApplication(this).getDatosPlot(nacionalidad, campoEdad.getSelectedItem().toString(), campoAnno.getSelectedItem().toString(), campoServicio.getSelectedItem().toString());
                 //Ponemos los datos en un formato adecuado para la libreria de graficos
                 ArrayList<BarEntry> s = new ArrayList<BarEntry>();
-                ArrayList<String> annos = Application.getMiApplication(this).getAnnos();
+                ArrayList<String> annos = Application.getMiApplication(this).getAnnos(this);
                 String[] annosArray = new String[r.size()];
                 for (int i = 0; i < r.size(); i++){
                     BarEntry entrada = new BarEntry( i, r.get(i));
                     s.add(entrada);
-                    if (campoAnno.getSelectedItem().toString().equals("Todos")) {
+                    if (campoAnno.getSelectedItem().toString().equals(getString(R.string.todos))) {
                         if (i != 0) {
                             annosArray[i - 1] = annos.get(i);
                         } else {
@@ -144,11 +145,11 @@ public class DataActivity extends AppCompatActivity implements View.OnClickListe
                 campoPlot.getXAxis().setLabelCount(dataset.getEntryCount());
                 campoPlot.getAxisRight().setAxisMinValue(0);
                 campoPlot.getAxisLeft().setAxisMinValue(0);
-                if (campoAnno.getSelectedItem().toString().equals("Todos")) {
+                if (campoAnno.getSelectedItem().toString().equals(getString(R.string.todos))) {
                     campoPlot.getXAxis().setValueFormatter(new IndexAxisValueFormatter(annosArray));
                 }
                 else{
-                    campoPlot.getXAxis().setValueFormatter(new IndexAxisValueFormatter(new String[]{"Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic", "Todos"}));
+                    campoPlot.getXAxis().setValueFormatter(new IndexAxisValueFormatter(new String[]{getString(R.string.enero), getString(R.string.febrero), getString(R.string.marzo), getString(R.string.abril), getString(R.string.mayo), getString(R.string.junio), getString(R.string.julio), getString(R.string.agosto), getString(R.string.septiembre), getString(R.string.octubre), getString(R.string.noviembre), getString(R.string.diciembre), getString(R.string.todos)}));
                 }
                 campoPlot.getXAxis().setGranularity(1f);
                 campoPlot.getLegend().setEnabled(false);

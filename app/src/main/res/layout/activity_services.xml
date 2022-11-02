@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:text="Reserva de Servicios Abiertos"
+        android:text="@string/reserva_de_servicios_abiertos"
         android:textColor="#808080"
         android:textAlignment="center"
         android:textSize="25dp"
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onRadioButtonClicked"
-            android:text="Ducha" />
+            android:text="@string/ducha" />
 
         <Space
             android:layout_width="0dp"
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onRadioButtonClicked"
-            android:text="Lavandería" />
+            android:text="@string/lavander_a" />
 
         <Space
             android:layout_width="0dp"
@@ -73,7 +73,7 @@
         android:layout_marginTop="25dp"
         android:layout_marginRight="25dp"
         android:ems="10"
-        android:hint="Filtrar por nombre"
+        android:hint="@string/filtrar_por_nombre"
         android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -100,7 +100,7 @@
         android:backgroundTint="#0a73ad"
         android:fontFamily="sans-serif-smallcaps"
         android:onClick="onClick"
-        android:text="Ver Fechas"
+        android:text="@string/ver_fechas"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:layout_marginBottom="20dp"

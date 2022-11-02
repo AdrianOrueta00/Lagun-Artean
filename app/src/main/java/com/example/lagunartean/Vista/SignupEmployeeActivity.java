@@ -22,6 +22,7 @@ public class SignupEmployeeActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         setContentView(R.layout.activity_employee_signup);
         getSupportActionBar().hide();
 
@@ -42,7 +43,9 @@ public class SignupEmployeeActivity extends AppCompatActivity implements View.On
                 }
                 else {
                     if (!Application.getMiApplication(this).existeEmpleado(nombre, contrasena)) {
+                        Application.getMiApplication(this).iniciarSesion(nombre, contrasena);
                         Application.getMiApplication(this).anadirEmpleado(nombre, contrasena);
+
                         Intent miIntent1 = new Intent(SignupEmployeeActivity.this, MainActivity.class);
 
                         startActivity(miIntent1);
@@ -50,8 +53,6 @@ public class SignupEmployeeActivity extends AppCompatActivity implements View.On
                     }
                     else{
                         Toast.makeText(this, "El usuario ya existe", Toast.LENGTH_SHORT).show();
-                        boolean foo = Application.getMiApplication(this).esAdmin(nombre, contrasena);
-                        System.out.println(foo);
                     }
                 }
                 break;

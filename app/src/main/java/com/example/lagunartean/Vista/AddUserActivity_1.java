@@ -41,6 +41,7 @@ public class AddUserActivity_1 extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        Application.getMiApplication(getApplicationContext()).setIdiomaAplicacion(getApplicationContext());
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
 

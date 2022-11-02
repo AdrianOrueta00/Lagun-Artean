@@ -27,6 +27,7 @@ public class UserListActivity extends AppCompatActivity {
 
     private void inicializar(){
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        Application.getMiApplication(getApplicationContext()).setIdiomaAplicacion(getApplicationContext());
         setContentView(R.layout.activity_user_list);
         getSupportActionBar().hide();
         userRecycler = findViewById(R.id.recycler);

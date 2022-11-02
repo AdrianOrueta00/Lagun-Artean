@@ -1,9 +1,8 @@
 package com.example.lagunartean.Modelo;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.DatePicker;
+import android.content.res.Configuration;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
@@ -13,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lagunartean.Controlador.DatabaseAdapter;
 import com.example.lagunartean.Controlador.ServiceAdapter;
 import com.example.lagunartean.Controlador.UsersAdapter;
+import com.example.lagunartean.R;
 import com.example.lagunartean.Vista.MainActivity;
-import com.example.lagunartean.Vista.UserServiceViewHolder;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -23,7 +22,7 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
+import java.util.Locale;
 
 public class Application {
 
@@ -31,9 +30,12 @@ public class Application {
     private UserList lUsuarios;
     private DatabaseAdapter db;
     private String filtro;
+    private String nombreSesion;
+    private String contrasenaSesion;
+    private String idioma;
 
     private Application(Context pContext){ //Patron Singleton
-        db = new DatabaseAdapter(pContext.getApplicationContext(), "LagunArtean", null, 6);
+        db = new DatabaseAdapter(pContext.getApplicationContext(), "LagunArtean", null, 10);
         lUsuarios = new UserList(db.cargarUsuarios());
         filtro = "";
     }
@@ -94,7 +96,9 @@ public class Application {
                     c.setTimeInMillis(selection);
                     String fechaString = formatDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
                     db.registrarFechaDucha(id, fechaString);
-                    Toast.makeText(ctx, "Se ha registrado a " + nombre + " para ducharse el día " + fechaString, Toast.LENGTH_LONG).show();
+                    String texto = ctx.getString(R.string.mensaje_ducha_registrada);
+                    texto = String.format(texto, nombre, fechaString);
+                    Toast.makeText(ctx, texto, Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(ctx.getApplicationContext(), MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     ctx.startActivity(intent);
@@ -195,7 +199,7 @@ public class Application {
         return posSeleccionada;
     }
 
-    public ArrayList<String> getEdades(){ //Devuelve las edades existentes entre todos los usuarios
+    public ArrayList<String> getEdades(Context pContexto){ //Devuelve las edades existentes entre todos los usuarios
                                           //Ordenadas y sin repetir
         ArrayList<Integer> edades = new ArrayList<Integer>();
         int edadActual;
@@ -208,20 +212,20 @@ public class Application {
         Collections.sort(edades);
 
         ArrayList<String> edadesStrings = new ArrayList<String>();
-        edadesStrings.add("Todas");
+        edadesStrings.add(pContexto.getString(R.string.todas));
         for (int i = 0; i < edades.size(); i++){
             edadesStrings.add(edades.get(i).toString());
         }
         return edadesStrings;
     }
 
-    public ArrayList<String> getAnnos(){ //Devuelve los annos en los que existen reservas
+    public ArrayList<String> getAnnos(Context pContexto){ //Devuelve los annos en los que existen reservas
                                          //Ordenados y sin repetir
         ArrayList<String> annosQuery = db.getAnnos();
 
 
         ArrayList<String> annosStrings = new ArrayList<String>();
-        annosStrings.add("Todos");
+        annosStrings.add(pContexto.getString(R.string.todos));
         for (int i = 0; i < annosQuery.size(); i++){
             annosStrings.add(annosQuery.get(i).toString());
         }
@@ -235,7 +239,7 @@ public class Application {
         if (pNacionalidad != null){
             listaFiltrada = listaFiltrada.filtrarNacionalidad(pNacionalidad);
         }
-        if (!pEdad.equals("Todas")){
+        if (!pEdad.equals("Todas")&&!pEdad.equals("Guztiak")){
             listaFiltrada = listaFiltrada.filtrarEdad(pEdad);
         }
 
@@ -253,11 +257,56 @@ public class Application {
         return db.comprobarEmpleado(pNombre, pContrasena, db.getReadableDatabase());
     }
 
-    public boolean esAdmin(String pNombre, String pContrasena){
-        return db.isAdmin(pNombre, pContrasena);
+    public boolean esAdmin(){
+        return db.isAdmin(nombreSesion, contrasenaSesion);
     }
 
     public void anadirEmpleado(String pNombre, String pContrasena){
-        db.insertarEmpleado(pNombre, pContrasena, false, db.getWritableDatabase());
+        db.insertarEmpleado(pNombre, pContrasena, false, "es", db.getWritableDatabase());
+    }
+
+    public void iniciarSesion(String pNombre, String pContrasena){
+        String idioma = db.getIdioma(pNombre, pContrasena);
+        if (idioma==null){
+            idioma = "es";
+        }
+        this.nombreSesion = pNombre;
+        this.contrasenaSesion = pContrasena;
+        this.idioma = idioma;
+    }
+
+    public void actualizarIdioma(String pIdioma, Context pContexto){
+        db.setIdioma(nombreSesion, contrasenaSesion, pIdioma);
+        idioma=pIdioma;
+        setIdiomaAplicacion(pContexto);
+    }
+
+    public void setIdiomaAplicacion(Context pContexto){
+        Locale locale = new Locale(idioma);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        pContexto.getResources().updateConfiguration(config, pContexto.getResources().getDisplayMetrics());
+    }
+
+    public String getIdioma(){
+        return idioma;
+    }
+
+    public int getMaxLavanderia(){
+        int max = db.getMaxUsuariosLavanderia();
+        return max;
+    }
+
+    public void setMaxLavanderia(int pMax){
+        db.setMaxUsuariosLavanderia(pMax);
+    }
+
+    public boolean hayMaxLavanderia(){
+        return db.maxUsuariosLavanderiaActivado();
+    }
+
+    public void setActivarMaxLavanderia(boolean pActivado){
+        db.setMaxUsuariosLavanderiaActivado(pActivado);
     }
 }

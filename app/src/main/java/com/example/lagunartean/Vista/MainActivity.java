@@ -8,6 +8,7 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.lagunartean.Modelo.Application;
 import com.example.lagunartean.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        Application.getMiApplication(this).setIdiomaAplicacion(this);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
@@ -53,6 +55,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(miIntent4);
 
                 break;
+
+            case R.id.btn_opciones:
+                if (Application.getMiApplication(this).esAdmin()) {
+                    Intent miIntent5 = new Intent(MainActivity.this, SettingsAdminActivity.class);
+                    miIntent5.putExtra("idioma", Application.getMiApplication(this).getIdioma());
+                    startActivity(miIntent5);
+                } else {
+                    Intent miIntent5 = new Intent(MainActivity.this, SettingsActivity.class);
+                    miIntent5.putExtra("idioma", Application.getMiApplication(this).getIdioma());
+                    startActivity(miIntent5);
+                }
         }
     }
 }

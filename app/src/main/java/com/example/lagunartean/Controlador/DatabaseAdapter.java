@@ -31,6 +31,7 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
     private static final String CAMPO_HASH = "hash";
     private static final String CAMPO_SAL = "sal";
     private static final String CAMPO_ADMIN = "administrador";
+    private static final String CAMPO_IDIOMA = "idioma";
     private static final String TABLA_USUARIO = "usuarios";
     private static final String TABLA_DUCHAS = "duchas";
     private static final String TABLA_LAVANDERIA = "lavanderia";
@@ -41,14 +42,19 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
     private static final String CAMPO_FECHA = "fnacimiento";
     private static final String CAMPO_NACIONALIDAD = "nacionalidad";
     private static final String CAMPO_FECHA_RESERVA = "freserva";
+    private final static String TABLA_VALORES_ADMIN = "valores";
+    private final static String CAMPO_MAX_USUARIOS_LAVANDERIA = "max_lavanderia";
+    private final static String CAMPO_ACTIVAR_MAX_LAVANDERIA = "activar_max_lavanderia";
 
-    private static String MAX_USUARIOS_LAVANDERIA = "7";
+
 
     private static final String CREAR_TABLA_EMPLEADOS = "CREATE TABLE IF NOT EXISTS " + TABLA_EMPLEADO +
             "(" + CAMPO_NOMEMPLEADO + " TEXT, " +
-            CAMPO_HASH + " BLOB PRIMARY KEY, " +
+            CAMPO_HASH + " BLOB UNIQUE, " +
             CAMPO_SAL + " BLOB, " +
-            CAMPO_ADMIN + " INTEGER)";
+            CAMPO_ADMIN + " INTEGER, " +
+            CAMPO_IDIOMA + " TEXT, " +
+            CAMPO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT)";
 
     private static final String CREAR_TABLA_USUARIO = "CREATE TABLE IF NOT EXISTS " + TABLA_USUARIO +
             "(" + CAMPO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -73,6 +79,45 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
             "FOREIGN KEY(" + CAMPO_ID + ") " +
             "REFERENCES " + TABLA_USUARIO + "(" + CAMPO_ID + "))";
 
+    private static final String CREAR_TABLA_VALORES = "CREATE TABLE IF NOT EXISTS " + TABLA_VALORES_ADMIN +
+            "(" + CAMPO_ID + " INTEGER PRIMARY KEY, " +
+            CAMPO_MAX_USUARIOS_LAVANDERIA + " INTEGER, " +
+            CAMPO_ACTIVAR_MAX_LAVANDERIA + " INTEGER)";
+
+    public int getMaxUsuariosLavanderia(){
+        int max = 7; //default
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + TABLA_VALORES_ADMIN, null);
+        if (cursor.moveToNext()){
+            max = cursor.getInt(1);
+        }
+        return max;
+    }
+
+    public void setMaxUsuariosLavanderia(int pMax){
+        this.getWritableDatabase().execSQL("UPDATE " + TABLA_VALORES_ADMIN +
+                " SET " + CAMPO_MAX_USUARIOS_LAVANDERIA + "=" + pMax);
+    }
+
+    public boolean maxUsuariosLavanderiaActivado(){
+        boolean activado = true; //default
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + TABLA_VALORES_ADMIN, null);
+        if (cursor.moveToNext()){
+            activado = (cursor.getInt(2)==1);
+        }
+        return activado;
+    }
+
+    public void setMaxUsuariosLavanderiaActivado(boolean pActivado){
+        if (pActivado){
+            this.getWritableDatabase().execSQL("UPDATE " + TABLA_VALORES_ADMIN +
+                    " SET " + CAMPO_ACTIVAR_MAX_LAVANDERIA + "=" + 1);
+        }
+        else{
+            this.getWritableDatabase().execSQL("UPDATE " + TABLA_VALORES_ADMIN +
+                    " SET " + CAMPO_ACTIVAR_MAX_LAVANDERIA + "=" + 0);
+        }
+    }
+
 
     public DatabaseAdapter(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -84,9 +129,14 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREAR_TABLA_USUARIO);
         sqLiteDatabase.execSQL(CREAR_TABLA_DUCHAS);
         sqLiteDatabase.execSQL(CREAR_TABLA_LAVANDERIA);
-        if (!comprobarEmpleado("Admin", "LA1234", sqLiteDatabase)){
-            insertarEmpleado("Admin", "LA1234", true, sqLiteDatabase);
-        }
+        sqLiteDatabase.execSQL(CREAR_TABLA_VALORES);
+
+        insertarEmpleado("Admin", "LA1234", true, "es", sqLiteDatabase);
+
+        ContentValues values = new ContentValues();
+        values.put(CAMPO_MAX_USUARIOS_LAVANDERIA, 7);
+        values.put(CAMPO_ACTIVAR_MAX_LAVANDERIA, 1);
+        sqLiteDatabase.insert(TABLA_VALORES_ADMIN, null, values);
 
     }
 
@@ -100,7 +150,7 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
     }
 
 
-    public void insertarEmpleado(String pNombre, String pContrasena, boolean pAdmin, SQLiteDatabase db){
+    public void insertarEmpleado(String pNombre, String pContrasena, boolean pAdmin, String pIdioma, SQLiteDatabase db){
         //Hasheamos la contrasena
         SecureRandom random = new SecureRandom();
         byte[] sal = new byte[16];
@@ -121,6 +171,7 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
             else{
                 values.put(CAMPO_ADMIN, 0);
             }
+            values.put(CAMPO_IDIOMA, pIdioma);
 
             db.insert(TABLA_EMPLEADO, null, values);
 
@@ -162,7 +213,7 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
 
     public boolean isAdmin(String pNombre, String pContrasena){
         //Inicializamos variables
-        Boolean admin = null;
+        Boolean admin = false;
         Boolean correcto = false;
         byte[] hashObjetivo;
         byte[] sal;
@@ -191,6 +242,73 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
             }
         }
         return admin;
+    }
+
+    public String getIdioma(String pNombre, String pContrasena){
+        //Inicializamos variables
+        String idioma = null;
+        Boolean correcto = false;
+        byte[] hashObjetivo;
+        byte[] sal;
+        //Seleccionamos todas las entradas de la base de datos en las que coincida el nombre
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLA_EMPLEADO +
+                " WHERE " + CAMPO_NOMEMPLEADO + "='" + pNombre + "'", null);
+
+        //Por cada entrada generamos un hash a partir de la contrasena dada con la sal almacenada
+        //Y lo comparamos con el hash almacenado (el correcto)
+        while (cursor.moveToNext() && !correcto) {
+            hashObjetivo = cursor.getBlob(1);
+            sal = cursor.getBlob(2);
+            KeySpec spec = new PBEKeySpec(pContrasena.toCharArray(), sal, 65536, 128);
+            SecretKeyFactory factory = null;
+            try {
+                factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+                byte[] hashObtenido = factory.generateSecret(spec).getEncoded();
+                if (Arrays.equals(hashObtenido, hashObjetivo)){
+                    System.out.println("Exito");
+                    correcto = true;
+                    idioma = cursor.getString(4);
+                }
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
+        }
+        return idioma;
+    }
+
+    public void setIdioma(String pNombre, String pContrasena, String pIdioma){
+        //Inicializamos variables
+        Boolean correcto = false;
+        byte[] hashObjetivo;
+        byte[] sal;
+        //Seleccionamos todas las entradas de la base de datos en las que coincida el nombre
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLA_EMPLEADO +
+                " WHERE " + CAMPO_NOMEMPLEADO + "='" + pNombre + "'", null);
+
+        //Por cada entrada generamos un hash a partir de la contrasena dada con la sal almacenada
+        //Y lo comparamos con el hash almacenado (el correcto)
+        while (cursor.moveToNext() && !correcto) {
+            hashObjetivo = cursor.getBlob(1);
+            sal = cursor.getBlob(2);
+            KeySpec spec = new PBEKeySpec(pContrasena.toCharArray(), sal, 65536, 128);
+            SecretKeyFactory factory = null;
+            try {
+                factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+                byte[] hashObtenido = factory.generateSecret(spec).getEncoded();
+                if (Arrays.equals(hashObtenido, hashObjetivo)){
+                    System.out.println("Exito");
+                    correcto = true;
+
+                    int id = cursor.getInt(5);
+                    db.execSQL("UPDATE " + TABLA_EMPLEADO + " SET " + CAMPO_IDIOMA + "='" + pIdioma + "' WHERE " +
+                            CAMPO_ID + "=" + id);
+                }
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void insertarUsuario(String pNombre, String pDNI, String pTlf, String pFecha, String pNacionalidad){
@@ -257,11 +375,13 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String> fechas = new ArrayList<String>();
         //De todas las fechas en la tabla lavanderia devuelve las que tienen 7 reservas o mas
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLA_LAVANDERIA + " GROUP BY " + CAMPO_FECHA_RESERVA + " HAVING COUNT(" + CAMPO_FECHA_RESERVA + ") >= " + MAX_USUARIOS_LAVANDERIA, null);
-
-        while (cursor.moveToNext()){
-            fechas.add(cursor.getString(1));
+        if (maxUsuariosLavanderiaActivado()) {
+            Cursor cursor = db.rawQuery("SELECT * FROM " + TABLA_LAVANDERIA + " GROUP BY " + CAMPO_FECHA_RESERVA + " HAVING COUNT(" + CAMPO_FECHA_RESERVA + ") >= " + this.getMaxUsuariosLavanderia(), null);
+            while (cursor.moveToNext()){
+                fechas.add(cursor.getString(1));
+            }
         }
+
         return fechas;
     }
 
@@ -323,7 +443,7 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
         ArrayList<String> annosStrings = new ArrayList<String>();
 
         //Damos forma al array de resultados que devolveremos
-        if (!pAnno.equals("Todos")){
+        if (!pAnno.equals("Todos")&&!pAnno.equals("Guztiak")){
             for (int j = 0; j < 13; j++){ //12 barras y el total si es anual
                 datos.add(0);
             }
@@ -342,7 +462,7 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
             //Inicializamos el array de apariciones
             //(Marca las columnas en las que aparece cada usuario)
             apariciones = new ArrayList<Boolean>();
-            if (!pAnno.equals("Todos")){
+            if (!pAnno.equals("Todos")&&!pAnno.equals("Guztiak")){
                 for (int j = 0; j < 13; j++){
                     apariciones.add(false);
                 }
@@ -365,9 +485,9 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
 
 
             //Diferenciamos duchas, lavanderia, y duchas y lavanderia por tener queries distintas
-            if (pServicio.equals("Duchas")) {
+            if (pServicio.equals("Duchas")||pServicio.equals("Dutxak")) {
                 Cursor cursor = db.rawQuery(queryDuchas, null);
-                if (!pAnno.equals("Todos")){ //Si se nos pide un anno concreto
+                if (!pAnno.equals("Todos")&&!pAnno.equals("Guztiak")){ //Si se nos pide un anno concreto
 
                     int mesActual;
                     while (cursor.moveToNext()) { //Por cada reserva del usuario actual
@@ -395,9 +515,9 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
                     }
                 }
             }
-            else if (pServicio.equals("Lavandería")) { //Hacemos lo mismo que en Duchas pero con una query distinta
+            else if (pServicio.equals("Lavandería")||pServicio.equals("Garbitegia")) { //Hacemos lo mismo que en Duchas pero con una query distinta
                 Cursor cursor = db.rawQuery(queryLavanderia, null);
-                if (!pAnno.equals("Todos")){
+                if (!pAnno.equals("Todos")&&!pAnno.equals("Guztiak")){
 
                     int mesActual;
                     while (cursor.moveToNext()) {
@@ -426,7 +546,7 @@ public class DatabaseAdapter extends SQLiteOpenHelper {
             else{ //Si se piden ambos servicios hay que hacer dos consultas
                 Cursor cursor1 = db.rawQuery(queryDuchas, null);
                 Cursor cursor2 = db.rawQuery(queryLavanderia, null);
-                if (!pAnno.equals("Todos")){ //Si se nos pide un anno en concreto
+                if (!pAnno.equals("Todos")&&!pAnno.equals("Guztiak")){ //Si se nos pide un anno en concreto
                     //Bucle de la consulta de duchas
                     int mesActual;
                     while (cursor1.moveToNext()) {

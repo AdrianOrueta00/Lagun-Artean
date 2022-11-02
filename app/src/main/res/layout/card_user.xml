@@ -42,7 +42,7 @@
                 android:id="@+id/hint_edad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edad: "
+                android:text="@string/edad"
                 android:textSize="15dp"
                 android:textColor="#FFFFFF"></TextView>
             <TextView
@@ -62,7 +62,7 @@
                 android:id="@+id/hint_tlf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tlf: "
+                android:text="@string/tlf"
                 android:textSize="15dp"
                 android:textColor="#FFFFFF"></TextView>
             <TextView

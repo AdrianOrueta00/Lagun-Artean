@@ -37,6 +37,7 @@ public class ServicesActivity extends AppCompatActivity implements View.OnClickL
 
     private void inicializar(){
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        Application.getMiApplication(getApplicationContext()).setIdiomaAplicacion(getApplicationContext());
         setContentView(R.layout.activity_services);
         getSupportActionBar().hide();
         selector = findViewById(R.id.radio_servicios);
@@ -83,9 +84,9 @@ public class ServicesActivity extends AppCompatActivity implements View.OnClickL
         //Miramos que usuario esta seleccionado
 
         if (posSeleccionada == null) {
-            Toast.makeText(this, "Selecciona al menos un usuario", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.al_menos_un_usuario, Toast.LENGTH_SHORT).show();
         } else if (posSeleccionada == -1) {
-            Toast.makeText(this, "Selecciona un único usuario", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.selecciona_solo_un_usuario, Toast.LENGTH_SHORT).show();
         } else {
             //Poppear calendario con fechas grises pasando por Application
             int selectedId = selector.getCheckedRadioButtonId();
@@ -99,7 +100,7 @@ public class ServicesActivity extends AppCompatActivity implements View.OnClickL
                     break;
 
                 case -1:
-                    Toast.makeText(this, "Selecciona un servicio a reservar", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.selecciona_un_servicio, Toast.LENGTH_SHORT).show();
                     break;
             }
 
